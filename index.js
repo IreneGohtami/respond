@@ -57,10 +57,7 @@ app.post('/webhook', (req, res) => {
       
       if (event.message) {
         await handleMessage(senderPsid, event.message);
-      }
-      else if (event.postback) {
-        handlePostback(senderPsid, event.postback);
-      }      
+      }     
     });
 
     // Return a '200 OK' response to all events
