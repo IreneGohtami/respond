@@ -1,11 +1,10 @@
 'use strict';
 
 const axios = require('axios');
-const fs = require('fs');
-const JSONStream = require('JSONStream');
 const sgMail = require('@sendgrid/mail');
 
 const { customerGreetings, systemGreetings, queryKeywords } = require('./template');
+const Product = require('../models/product');
 
 const FB_API_URL = 'https://graph.facebook.com/v2.6/me/messages';
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -30,42 +29,30 @@ async function handleMessage(senderPsid, receivedMessage) {
         const sku = query[1];
 
         if (queryKeywords.includes(keyword)) {
-          const readStream = fs.createReadStream('data/products.json', { encoding: 'utf8' });
-          const parseStream = JSONStream.parse('*');
-          
-          parseStream.on('data', async function(product) {
-            if (product.sku == sku) {
-              switch(keyword) {
-                case '/desc':
-                  response.text = product.description;
-                  break;
-                case '/price':
-                  response.text = product.price;
-                  break;
-                case '/shipping':
-                  response.text = product.shipping;
-                  break;
-                case '/buy':
-                  response.text = `We got your request! Hang tight while we process your order for: "${product.name}"`;
-                  await sendEmail(product);
-                  break;
-                default:
-                  response.text = 'Unkown query';
-                  break;
-              }
-              // End parsing file & send the response message
-              parseStream.end();
-              await replyMessage(senderPsid, response);
-            }
-          })
-          .on('end', function () {
-            console.log('All the data in the file has been read');
-          })
-          .on('close', function () {
-            console.log('Stream has been destroyed and file has been closed');
-          });
+          // Search product from DB
+          const product = await fetchProductBySKU(sku);
 
-          readStream.pipe(parseStream);
+          if (product) {
+            switch(keyword) {
+              case '/desc':
+                response.text = product.description;
+                break;
+              case '/price':
+                response.text = product.price;
+                break;
+              case '/shipping':
+                response.text = product.shipping;
+                break;
+              case '/buy':
+                response.text = `We got your request! Hang tight while we process your order for: "${product.name}"`;
+                await sendEmail(product);
+                break;
+              default:
+                response.text = 'Unkown query';
+                break;
+            }
+            await replyMessage(senderPsid, response);
+          }
         }
       }
     }
@@ -106,6 +93,10 @@ async function sendEmail(product) {
   } catch (error) {
     console.log('Unable to send email: ' + JSON.stringify(error));
   }
+}
+
+async function fetchProductBySKU(sku) {
+  return Product.findOne({ sku });
 }
 
 module.exports = {

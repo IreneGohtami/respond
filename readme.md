@@ -7,14 +7,12 @@
   VERIFY_TOKEN={secret}
   PAGE_ACCESS_TOKEN={secret}
   SENDGRID_API_KEY={secret}
-  SENDGRID_EMAIL_FROM={secret}
   SENDGRID_EMAIL_TO={your email address}
-  SENDGRID_ORDER_TEMPLATE_ID={secret}
 ```
 3. Run the project: `npm start`
 
-# Task 1
-## Interact with Facebook Page
+## Task 1
+### Interact with Facebook Page
 
 1. Visit the following [Test Page](https://www.facebook.com/profile.php?id=100088974336410) in Facebook
 2. Send a message!
@@ -23,7 +21,7 @@
     - /desc, /price, /shipping, /buy followed by Product SKU
     - Product catalog can be found [here](https://raw.githubusercontent.com/BestBuyAPIs/open-data-set/master/products.json)
 
-# Task 2
+## Task 2
 1. Send transactions data to `POST /duplicate-transaction`
 2. Sample request body:
 ```

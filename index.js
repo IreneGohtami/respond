@@ -3,10 +3,13 @@
 require('dotenv').config();
 
 // Imports dependencies and set up http server
-const
-  express = require('express'),
-  bodyParser = require('body-parser'),
-  app = express().use(bodyParser.json());
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const app = express().use(bodyParser.json());
+
+// Initiate DB connection
+mongoose.connect(process.env.MONGODB_URL).then(() => console.log('DB connected'));
 
 const { handleMessage } = require('./message');
 const { findDuplicateTransaction } = require('./duplicate_transaction');
