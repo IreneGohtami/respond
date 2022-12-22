@@ -9,12 +9,13 @@ const
   app = express().use(bodyParser.json());
 
 const { handleMessage } = require('./message');
+const { findDuplicateTransaction } = require('./duplicate_transaction');
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 3000, () => console.log('App started'));
 
 // Webhook verification endpoint
-app.get('/webhook', (req, res) => {  
+app.get('/webhook', (req, res) => {
   // Parse params from the webhook verification request
   let mode = req.query['hub.mode'];
   let token = req.query['hub.verify_token'];
@@ -36,7 +37,7 @@ app.get('/webhook', (req, res) => {
 });
 
 // Process message endpoint
-app.post('/webhook', (req, res) => {  
+app.post('/webhook', (req, res) => {
   // Parse the request body from the POST
   const body = req.body;
 
@@ -65,4 +66,12 @@ app.post('/webhook', (req, res) => {
     // Return a '404 Not Found' if event is not from a page subscription
     res.sendStatus(404);
   }
+});
+
+// Find duplicate transaction
+app.post('/duplicate-transaction', (req, res) => {
+  const transactions = req.body;
+  const result = findDuplicateTransaction(transactions);
+
+  res.status(200).send(result);
 });

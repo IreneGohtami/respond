@@ -30,7 +30,7 @@ async function handleMessage(senderPsid, receivedMessage) {
         const sku = query[1];
 
         if (queryKeywords.includes(keyword)) {
-          const readStream = fs.createReadStream('data/products2.json', { encoding: 'utf8' });
+          const readStream = fs.createReadStream('data/products.json', { encoding: 'utf8' });
           const parseStream = JSONStream.parse('*');
           
           parseStream.on('data', async function(product) {
@@ -95,8 +95,8 @@ async function replyMessage(senderPsid, response) {
 async function sendEmail(product) {
   const msg = {
     to: process.env.SENDGRID_EMAIL_TO,
-    from: process.env.SENDGRID_EMAIL_FROM,
-    templateId: process.env.SENDGRID_ORDER_TEMPLATE_ID,
+    from: 'irene@xendit.co',
+    templateId: 'd-64bb7caf4d17473998c1331d5b80e379',
     dynamicTemplateData: product
   };
 
