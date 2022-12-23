@@ -13,7 +13,6 @@
 
 ## Task 1
 ### Interact with Facebook Page
-
 1. Visit the following [Test Page](https://www.facebook.com/profile.php?id=100088974336410) in Facebook
 2. Send a message!
     - Hi, Hello, Good morning
@@ -76,3 +75,19 @@
   }
 ]
 ```
+
+## Task 3
+### How to solve the high volume of write operations in RDS MySQL databases?
+- Analyze slow SQL statements from logs and optimize them based on analysis result. For example: 
+  - Add missing indexes or remove unused indexes
+  - Too many rows to scan -> data housekeeping
+  - Avoid using multiple OR condition & instead split the query that utilize the defined indexes
+  - SELECT only fields that you need, instead of everything (*)
+  - Unsuitable table structure design
+- When executing large write operation, such as deleting a large number of rows, it is advisable to split the transaction into batches.
+This prevents maxing out the I/O of your instance and reduces the flushes of dirty pages to the disk.
+- Tune DB parameters, such as increasing:
+  - `innodb_max_dirty_pages_pct`: the percentage of dirty pages allowed in the buffer pool.
+  - `innodb_io_capacity`: the maximum number of I/O operations allowed by InnoDB per second for each background task. This value affects the speed at which RDS flushes dirty pages to the disk and writes data to the buffer pool.
+  - `innodb_io_capacity_max`: the maximum number of I/O operations allowed by InnoDB per second for each background task when the flushing activity falls behind.
+  - Upgrade DB instance specification
